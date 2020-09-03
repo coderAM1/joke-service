@@ -7,12 +7,14 @@
 	    *{font-family: sans-serif;}
 	    #setup{font-weight: bold;}
 	    #punchline{font-style: italic;}
-	    #btnFetchJoke{font-size:130%;padding:.2em;}		
+	    #btnFetchJoke{font-size:130%;padding:.2em;}	
+        #btnFetchSJoke{font-size:130%;padding:.2em;}		
 	  </style>
         </head>
 <body>
 	<h1>View a random joke!</h1>
-	<button id="btnFetchJoke" title="Click to see a new joke!">See new Joke!</button>
+    <button id="btnFetchJoke" title="Click to see a new joke!">See new Joke!</button>
+    <button id="btnFetchSJoke" title="Click to see a stale joke!">See new Stale Joke!</button>
 	<hr>
 	<div>
 		<p id="setup">???</p>
@@ -25,9 +27,9 @@
 		setup.innerHTML = "...fetching joke...";
 		punchline.innerHTML = "Can't wait for that punchline!";
 		
-		// II. Set up the XHR request
-		//const url = "https://my-joke-server.herokuapp.com/random-joke";
-		const url = "http://localhost:3000/random-joke";
+		// II. Set usp the XHR request
+		const url = "https://joke-service-assignment.herokuapp.com/random-joke";
+		//const url = "http://localhost:3000/random-joke";
 		const xhr = new XMLHttpRequest();
 		
 		// III. Code that runs when the data shows up
@@ -54,13 +56,49 @@
 		// IV. Send the request
 		xhr.open("GET",url);
 		xhr.send();
-	}
+    }
+    
+    function getStaleJoke(){
+        // I. Clear the UI
+		setup.innerHTML = "...fetching joke...";
+        punchline.innerHTML = "Can't wait for that punchline!";
+        // II. Set usp the XHR request
+		const url = "https://joke-service-assignment.herokuapp.com/stale-joke";
+		//const url = "http://localhost:3000/stale-joke";
+		const xhr = new XMLHttpRequest();
+		
+		// III. Code that runs when the data shows up
+		xhr.onload = e => {
+			let str = e.target.responseText;
+			try{
+				let json = JSON.parse(e.target.responseText);
+				if( !json.q || !json.a){
+					setup.innerHTML = "There was a problem downloading the joke!";
+					punchline.innerHTML = "Check the console for more information";
+					console.log(`Could not find a 'q' and/or 'a' property! Downloaded string = ${str}`);
+				}else{
+					setup.innerHTML = json.q;
+					punchline.innerHTML = json.a;
+				}
+			}catch(error){
+				setup.innerHTML = "There was a problem downloading the joke!";
+					punchline.innerHTML = "Check the console for more information";
+					console.log(`This string does not parse to JSON. Downloaded string = ${str}`);
+					console.log(`error = ${error.message}`);
+			}
+		};
+		
+		// IV. Send the request
+		xhr.open("GET",url);
+		xhr.send();
+    }
    
    // Fetch a "starting" joke
    getJoke();
    
    // When the user clicks the button, fetch a new joke
    btnFetchJoke.onclick = getJoke;
+   btnFetchSJoke.onclick = getStaleJoke;
   </script>
 </body>
 </html>

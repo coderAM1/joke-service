@@ -1,12 +1,8 @@
 const http = require('http');
-
+const fs = require('fs');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const indexPage = `<html>
-                    <h1>Welcome to Jokes!!</h1>
-                    <p>Standard joke service is here -> <a href="./stale-joke">stale-joke</a></p>
-                    <p>Random joke service is here -> <a href="./random-joke">random-joke</a></p>
-                    </html>`;
+const indexPage = fs.readFileSync(`${__dirname}/./joke-client.html`);
 
 const jokes = [
 	{"q" : "Why did the chicken cross the road?", "a" : "To get to the other side!"},
